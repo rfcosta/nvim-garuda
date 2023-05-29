@@ -40,10 +40,10 @@ local function load_module_file(module)
         local status_ok, loaded_module = pcall(require, module)
         -- if successful at loading, set the return variable
         if status_ok then
-              found_module = loaded_module
-              -- if unsuccessful, throw an error
+            found_module = loaded_module
+            -- if unsuccessful, throw an error
         else
-              vim.api.nvim_err_writeln("Error loading file: " .. found_module .. "\n\n" .. loaded_module)
+            vim.api.nvim_err_writeln("Error loading file: " .. found_module .. "\n\n" .. loaded_module)
         end
     end
     -- return the loaded module or nil if no file found
@@ -56,21 +56,21 @@ end
 -- @param extend boolean value to either extend the default or simply overwrite it if an override is provided
 -- @return the new configuration table
 local function func_or_extend(overrides, default, extend)
-      -- if we want to extend the default with the provided override
-      if extend then
+    -- if we want to extend the default with the provided override
+    if extend then
             -- if the override is a table, use vim.tbl_deep_extend
             if type(overrides) == "table" then
-                  local opts = overrides or {}
-                  default = default and vim.tbl_deep_extend("force", default, opts) or opts
+                local opts = overrides or {}
+                default = default and vim.tbl_deep_extend("force", default, opts) or opts
                 -- if the override is  a function, call it with the default and overwrite default with the return value
             elseif type(overrides) == "function" then
-                  default = overrides(default)
+                default = overrides(default)
             end
             -- if extend is set to false and we have a provided override, simply override the default
-      elseif overrides ~= nil then
+    elseif overrides ~= nil then
             default = overrides
-      end
-      return default
+    end
+    return default
 end
 
 --- user settings from the base `user/init.lua` file
@@ -96,16 +96,16 @@ end
 ---@param extend? boolean # Whether extend the default settings or overwrite them with the user settings entirely (default: true)
 ---@return any # The new configuration settings with the user overrides applied
 function astronvim.user_opts(module, default, extend)
-      
-      if extend == nil then extend = true end                               -- default to extend = true
-      if default == nil then default = {} end                               -- if no default table is provided set it to an empty table
-      local user_module_settings = load_module_file("user." .. module)      -- try to load a module file if it exists
-      -- if no user module file is found, try to load an override from the user settings table from user/init.lua
-      if user_module_settings == nil then user_module_settings = user_setting_table(module) end
-      -- if a user override was found call the configuration engine
-      if user_module_settings ~= nil then default = func_or_extend(user_module_settings, default, extend) end
-      -- return the final configuration table with any overrides applied
-      return default
+    
+    if extend == nil then extend = true end                               -- default to extend = true
+    if default == nil then default = {} end                               -- if no default table is provided set it to an empty table
+    local user_module_settings = load_module_file("user." .. module)      -- try to load a module file if it exists
+    -- if no user module file is found, try to load an override from the user settings table from user/init.lua
+    if user_module_settings == nil then user_module_settings = user_setting_table(module) end
+    -- if a user override was found call the configuration engine
+    if user_module_settings ~= nil then default = func_or_extend(user_module_settings, default, extend) end
+    -- return the final configuration table with any overrides applied
+    return default
 end
 
 --- Updater settings overridden with any user provided configuration
